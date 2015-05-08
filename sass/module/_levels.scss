@@ -1,0 +1,20 @@
+.level {
+	color: $minnpost-black;
+	padding: $half-size;
+}
+.level--one {
+	background: $minnpost-bronze;
+}
+.level--two {
+	background: $minnpost-silver;
+}
+.level--three {
+	background: $minnpost-gold;
+}
+.level--four {
+	background: $minnpost-platinum;
+}
+
+.panel--form .level {
+	margin-bottom: 0.5em;
+}

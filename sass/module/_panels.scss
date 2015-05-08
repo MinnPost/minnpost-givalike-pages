@@ -1,0 +1,78 @@
+.js .panel {
+	display: none;
+}
+.no-js .panel {
+	display: block;
+}
+.panel {
+	h1, h2, h3 {
+		margin-bottom: 0;
+	}
+	h1 {
+		margin-bottom: 0;	
+	}
+	h2 {
+		margin-bottom: 0;
+	}
+	.honor, .actions--edit-amount {
+		font-family: $helvetica;
+		font-size: $small-size;
+	}
+	.honor {
+		margin-top: 1em;
+	}
+	.actions--edit-amount {
+		line-height: normal;
+		font-size: 80%;
+		margin-bottom: 1em;
+		li {
+			border-right: 1px solid $gray-med;
+			padding: 0 $half-space;
+			float: left;
+		}
+		li:first-child {
+			padding-left: 0;
+		}
+		li:last-child {
+			border: none;
+			padding-right: 0;
+		}
+	}
+	.benefits {
+		label {
+			float: left;
+			max-width: 100px;
+			height: 98px;
+			cursor: pointer;
+			margin-right: $half-space;
+			input {
+				display: none;
+			}
+			div {
+				padding: $half-space;
+				width: 100%;
+				height: 100%;
+			}
+			&:hover {
+				background: $gray-dark;
+				color: $white;
+			}
+		}
+		label.swag:last-of-type {
+			box-shadow: 0 0 3px 0 rgba(122,122,122, 1);
+		    display: block;
+		    float: left;
+		    max-width: 150px;
+		    text-align: center;
+		    font-family: $helvetica;
+		    height: 99px;
+		    div {
+		    	padding: $milli-space;
+		    }
+		}
+		input:checked ~ div {
+		  background: $minnpost-blue;
+		  color: $white;
+		}
+	}
+}
