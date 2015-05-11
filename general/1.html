@@ -99,6 +99,13 @@
     </div>
   </header>
 
+  <?php if (!empty($_POST)) { ?>
+  <section>
+    <h1>Results</h1>
+    <?php print_r($_POST); ?>
+  </section>
+  <?php } ?>
+
   <section class="progress progress--donation">
     <div class="wrapper">
       <ol>
@@ -140,7 +147,7 @@
       </section>
 
       <section class="panel panel--form" id="panel--pay">
-        <form class="support support--pay">
+        <form class="support support--pay" method="post">
           <h3>Donate $5.65 monthly</h3>
           <ul class="actions actions--edit-amount clear-block">
               <li><a href="#">Edit</a></li>
@@ -162,18 +169,71 @@
               <label class="additional-option"><input type="checkbox" name="PaymentControl$AdditionalInfoFields$ctl03$AdditionalInfoCheckbox" id="PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3"> Make this donation anonymously</label>
             </div>
 
-            <div class="form-itemform-item--billing-address">
-              <label>Billing Address
-                <input type="text" autocapitalize="off" autocorrect="off" name="full_address" id="full_address" class="geocomplete" placeholder="" required>
-              </label>
-              <label class="additional-option"><input type="checkbox" name="useforshipping" id="useforshipping" checked="checked"> Use this address for shipping</label>
-            </div>
+            <fieldset class="billing" data-geo="data-geo">
+              <div class="form-item form-item--billing-address form-item--geocode">
+                <label>Billing Address
+                  <input type="text" autocapitalize="off" autocorrect="off" name="full_address" id="full_address" class="geocomplete" placeholder="" required>
+                </label>
+                <label class="additional-option"><input type="checkbox" name="useforshipping" id="useforshipping" checked="checked"> Use this address for shipping</label>
+              </div>
 
-            <div class="form-item form-item--shipping-address">
-              <label>Shipping Address
-                <input type="text" autocapitalize="off" autocorrect="off" name="full_shipping_address" id="full_shipping_address" class="geocomplete" placeholder="">
-              </label>
-            </div>
+              <div class="form-item form-item--nojs form-item--street">
+                <label>Billing Street Address
+                  <input type="hidden" name="PaymentControl$txtBillAddress" id="PaymentControl_txtBillAddress" data-geo="name">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--city">
+                <label>Billing City
+                  <input type="hidden" name="PaymentControl$txtBillCity" id="PaymentControl_txtBillCity" data-geo="locality">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--state">
+                <label>Billing State
+                  <input type="hidden" name="PaymentControl$ddlBillState" id="PaymentControl_ddlBillState" data-geo="administrative_area_level_1">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--zip">
+                <label>Billing Zip Code
+                  <input type="hidden" name="PaymentControl$txtZip" id="PaymentControl_txtZip" data-geo="postal_code">
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="shipping" data-geo="data-ship-geo">
+
+              <div class="form-item form-item--shipping-address form-item--geocode">
+                <label>Shipping Address
+                  <input type="text" autocapitalize="off" autocorrect="off" name="full_shipping_address" id="full_shipping_address" class="geocomplete" placeholder="">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--street">
+                <label>Shipping Street Address
+                  <input type="hidden" name="PaymentControl$txtShipAddress" id="PaymentControl_txtShipAddress" data-ship-geo="name">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--city">
+                <label>Shipping City
+                  <input type="hidden" name="PaymentControl$txtShipCity" id="PaymentControl_txtShipCity" data-ship-geo="locality">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--state">
+                <label>Shipping State
+                  <input type="hidden" name="PaymentControl$txtShipState" id="PaymentControl_txtShipState" data-ship-geo="administrative_area_level_1">
+                </label>
+              </div>
+
+              <div class="form-item form-item--nojs form-item--zip">
+                <label>Shipping Zip Code
+                  <input type="hidden" name="PaymentControl$txtShipZip" id="PaymentControl_txtShipZip" data-ship-geo="postal_code">
+                </label>
+              </div>
+            </fieldset>
 
             <div class="form-item form-item--email-address">
               <label>Email Address <input type="email" id="PaymentControl_txtEmail" name="PaymentControl$txtEmail" required></label>
@@ -191,11 +251,14 @@
 
             <div class="form-item form-item--credit-card">
               <label>Credit Card Details
-                <input type="text" autocapitalize="off" autocorrect="off" name="full_shipping_address" id="full_shipping_address" class="geocomplete" placeholder="">
+                <input type="text" autocapitalize="off" autocorrect="off" name="credit-card" id="credit-card">
               </label>
             </div>
 
           </fieldset>
+
+          <button type="submit" name="submit" id="submit">Place this Donation</button>
+
         </form>
       </section>
 
@@ -214,7 +277,7 @@
   </footer>
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-  <script src="//maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+  <script src="//maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>  
   <script src="/js/vendor/jquery.geocomplete.min.js"></script>
   <script src="/js/main.min.js"></script>
 </body>

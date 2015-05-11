@@ -5,6 +5,12 @@ fieldset {
   padding-left: 0;
   padding-right: 0;
   border: 0;
+  fieldset {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
 }
 
 .form-item {
@@ -62,6 +68,13 @@ label {
   margin: 0 0 $h5-space 0;
   font-family: $helvetica;
   color: $gray-med;
+}
+
+.no-js .form-item--nojs {
+  display: block;
+}
+.js .form-item--nojs {
+  display: none;
 }
 
 #{$all-text-inputs},

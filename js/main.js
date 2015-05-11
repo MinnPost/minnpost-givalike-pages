@@ -27,7 +27,6 @@ function paymentPanels(active) {
 
 function getFullAddress() {
 
-	$('.not-geocomplete').addClass('offscreen');
 	//$('.use-geocomplete').show();
 
 	/*$('#full_address').geocomplete({
@@ -38,7 +37,8 @@ function getFullAddress() {
 	$('#full_address').trigger('geocode');
 	});*/
 
-	$('.geocomplete').click(function(){
+	// need to figure out if we can pass this somehow without showing it
+	$('.geocomplete').click(function() {
 		$(this).trigger('geocode');
 
 		var attribute = $(this).closest('fieldset').attr('data-geo');
@@ -52,11 +52,27 @@ function getFullAddress() {
 
 }
 
+function donateAnonymously() {
+	if ($('#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3').is(':checked')) {
+		$('.form-item--display-name label:first').hide();
+	} else {
+		$('.form-item--display-name label:first').show();
+	}
+
+	$('#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3').change(function() {
+		if ($(this).is(':checked')) {
+			$('.form-item--display-name label:first').hide();
+		} else {
+			$('.form-item--display-name label:first').show();
+		}
+	});
+}
+
 function shippingAddress() {
 	if ($('#useforshipping').is(':checked')) {
-		$('.form-item--password').show();
+		$('.form-item--shipping-address').hide();
 	} else {
-		$('.form-item--password').hide();
+		$('.form-item--shipping-address').show();
 	}
 
 	$('#useforshipping').change(function() {
@@ -103,8 +119,13 @@ function minnpostAccount() {
 $(function() {
 	if (typeof google !== 'undefined' && google.hasOwnProperty('maps')) {
 		getFullAddress();
+	} else {
+		$('.form-item--nojs').show();
+		$('.form-item--nojs input').each(function() {
+			$(this).attr('type', 'text');
+		});
+		$('.form-item--geocode label:first').hide();
 	}
-	//$('.use-geocomplete').hide();
 });
 
 // main.js
@@ -124,6 +145,7 @@ $(document).ready(function() {
 		paymentPanels($(this).parent().attr('class'));
 		event.preventDefault();
 	});
+	donateAnonymously();
 	shippingAddress();
 	minnpostAccount();
 });
