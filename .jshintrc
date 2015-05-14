@@ -21,6 +21,7 @@
       "$":false,
       "jquery":false,
       "History": true,
-      "google": false
+      "google": false,
+      "_gaq": false
   }
 }

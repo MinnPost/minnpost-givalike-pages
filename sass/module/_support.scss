@@ -1,9 +1,14 @@
 .support--summary {
-	@include row();
-	fieldset {
-		@include span-columns(6);
-		background: $white;
-		border: 0;
-		padding: 0;
+
+}
+
+@media screen and (min-width: $large-screen) {
+	.support--summary {
+		@include row();
+		fieldset {
+			@include span-columns(6);
+			border: 0;
+			padding: 0;
+		}
 	}
 }

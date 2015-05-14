@@ -16,6 +16,9 @@ button, a.btn, input[type="submit"] {
   user-select: none;
   vertical-align: middle;
   white-space: nowrap;
+  // maybe test this later
+  //text-align: center;
+  //width: 100%;
 
   &:hover,
   &:focus,
@@ -62,3 +65,12 @@ button, a.btn, input[type="submit"] {
     }
   }
 }
+
+// maybe test this later
+/*@media screen and (min-width: $medium-screen) {
+  #{$all-button-inputs},
+  button, a.btn, input[type="submit"] {
+    width: auto;
+    text-align: left;
+  }
+}*/

@@ -35,24 +35,47 @@ $valid : #089e00;
 	-o-perspective: 1000;
 	perspective: 1000;
 
-	border: 1px solid $gray;
+	//border: 1px solid $gray;
 	overflow: hidden;
-	padding: 0 0.5em;
-	margin-bottom: 0.2em;
+	//padding: 0 0.5em;
+	//margin-bottom: 0.2em;
 	position: relative;
 
+	margin-bottom: 0;
+	margin-top: $quarter-space;
+	background-color: $base-background-color;
+	border: $base-border;
+	border-radius: $base-border-radius;
+	//box-shadow: $form-box-shadow;
+	box-sizing: border-box;
+	font-family: $base-font-family;
+	font-size: $base-font-size;
+
+	&:hover {
+		border-color: darken($base-border-color, 10%);
+	}
+
+	&:focus {
+		border-color: $action-color;
+		box-shadow: $form-box-shadow-focus;
+		outline: none;
+	}
+	
+	padding: $base-spacing / 3;
+	transition: border-color;
+	width: 100%;
+
 	input {
-		background: transparent;
+		display: inline-block;
 		border: 0;
 		box-shadow: none;
-		outline: 0;
-		padding: 0;
-		padding: 1em 0;
-
+		margin-bottom: 0;
+		padding-bottom: 0;
 	}
 
 	.card-number {
-		width: 206px;
+		//width: 206px;
+		max-width: 85%;
 
 		&.transitioning-out {
 			-webkit-animation-iteration-count: 1;

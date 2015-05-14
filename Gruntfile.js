@@ -108,10 +108,17 @@ module.exports = function(grunt) {
     concat: {
       options: {
         stripBanners: true,
-        banner: '<%= banner %>'
+        banner: '<%= banner %>',
+        separator: ';'
       },
       js: {
-        src: '<%= jshint.files %>',
+        src: [
+            'js/vendor/jquery.geocomplete.min.js',
+            'js/vendor/jquery.stripe.payment.js',
+            //'js/vendor/jquery.inputmask.date.extensions.js',
+            //'js/vendor/creditcard.js',
+            'js/src/*.js'
+        ],
         dest: '<%= dir.js %>/main.js'
       },
     },
