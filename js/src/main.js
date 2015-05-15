@@ -11,7 +11,14 @@ $(document).ready(function() {
 		'query' : 'step',
 		'percentage' : 0.05,
 		'level_amount_selector' : '.amount .level-amount',
+		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
+		'level_indicator_selector' : 'h2.level',
+		'level_name_selector' : '.level-name',
+		'review_benefits_selector' : '.review-benefits',
+		'upsell_btn_selector' : '.btn--upsell',
+		'upsell_selector' : '.well--upsell',
+		'upsell_amount_selector' : '.upsell-amount',
 		'name_selector' : '.form-item--display-name',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
 		'shipping_address_selector' : '.form-item--shipping-address',
@@ -20,7 +27,11 @@ $(document).ready(function() {
 		'password_selector' : '.form-item--password',
 		'billing_selector' : 'fieldset.billing',
 		'shipping_selector' : 'fieldset.shipping',
-		'debug' : true
+		'credit_card_fieldset' : '.credit-card-group',
+		'cc_num_selector' : '#credit-card-number',
+		'cc_exp_selector' : '#card-expiration',
+		'cc_cvv_selector' : '#card-cvv',
+		'debug' : false
 	});
 
 });

@@ -19,7 +19,14 @@
 		'query' : 'step',
 		'percentage' : 0.05,
 		'level_amount_selector' : '.level-amount',
+		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
+		'level_indicator_selector' : 'h2.level',
+		'level_name_selector' : '.level-name',
+		'review_benefits_selector' : '.review-benefits',
+		'upsell_btn_selector' : '.btn--upsell',
+		'upsell_selector' : '.well--upsell',
+		'upsell_amount_selector' : '.upsell-amount',
 		'name_selector' : '.form-item--display-name',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
 		'shipping_address_selector' : '.form-item--shipping-address',
@@ -27,7 +34,36 @@
 		'create_mp_selector' : '#creatempaccount',
 		'password_selector' : '.form-item--password',
 		'billing_selector' : 'fieldset.billing',
-		'shipping_selector' : 'fieldset.shipping'
+		'shipping_selector' : 'fieldset.shipping',
+		'credit_card_fieldset' : '.credit-card-group',
+		'cc_num_selector' : '#credit-card-number',
+		'cc_exp_selector' : '#card-expiration',
+		'cc_cvv_selector' : '#card-cvv',
+		'levels' : {
+			1 : {
+				'name' : 'bronze',
+				'max' : 60
+			},
+			2 : {
+				'name' : 'silver',
+				'min' : 60,
+				'max' : 120
+			},
+			3 : {
+				'name' : 'gold',
+				'min' : 120,
+				'max' : 240
+			},
+			4 : {
+				'name' : 'platinum',
+				'min' : 240
+			}
+		},
+		'upsell' : {
+			'bronze' : true,
+			'silver' : 9,
+			'gold' : 19
+		}
 	}; // end defaults
 
 	// The actual plugin constructor
@@ -60,9 +96,13 @@
 
 			// modify options as needed
 			this.options.amount = parseFloat($(this.options.level_amount_selector, this.element).text());
+			this.options.frequency = parseFloat($(this.options.frequency_selector, this.element).data('year-freq'));
 			this.options.processing_percent = parseFloat(this.options.percentage);
 			this.options.processing_fee = this.options.amount * this.options.processing_percent;
 			this.options.new_amount = this.options.amount + this.options.processing_fee;
+			this.options.processing_fee = parseFloat(this.options.processing_fee).toFixed(2);
+			this.options.upsell_amount = parseFloat($(this.options.upsell_amount_selector, this.element).text());
+			this.options.upsold = this.options.amount + this.options.upsell_amount;
 
 			if (this.options.debug === true) {
 				this.debug(this.options);
@@ -93,6 +133,8 @@
 
 			this.paymentPanels(query_panel); // tabs
 			this.creditCardProcessingFees(this.options); // processing fees
+			this.options.level = this.checkLevel(this.element, this.options, this.options.amount, this.options.frequency); // check what level it is
+			this.upsell(this.element, this.options, this.options.amount, this.options.frequency); // upsell to next level
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options); // option for creating minnpost account
@@ -237,14 +279,14 @@
 				if (!$(this).hasClass('remove')) {
 					//$('.amount .level-amount').text(new_amount);
 					full_amount = options.new_amount;
-					$(this).text('Remove $' + parseFloat(options.processing_fee));
+					$(this).text('Remove $' + options.processing_fee);
 				} else {
 					//$('.amount .level-amount').text(amount);
 					full_amount = options.amount;
-					$(this).text('Add $' + parseFloat(options.processing_fee));
+					$(this).text('Add $' + options.processing_fee);
 				}
 				$(this).toggleClass('remove');
-				$(options.full_amount_selector).text(full_amount);
+				$(options.full_amount_selector).text(parseFloat(full_amount).toFixed(2));
 				return false;
 			});
 		},
@@ -262,6 +304,81 @@
 				} else {
 					$(options.name_selector + ' label:first', element).show();
 				}
+			});
+		},
+
+		checkLevel: function(element, options, amount, frequency) {
+
+			var amount_yearly;
+			if (frequency === 12) {
+				amount_yearly = amount * frequency;
+			} else if (frequency === 1) {
+				amount_yearly = amount;
+			}
+
+			var level = '';
+			var levelclass = 'level level--';
+			$.each(options.levels, function(index, value) {
+				var name = value.name;
+				var num = index;
+				var max = value.max;
+				var min = value.min;
+				if (typeof min !== 'undefined' && typeof max !== 'undefined') {
+					if (amount_yearly >= min && amount_yearly < max) {
+						level = name;
+						levelclass += num;
+						return false;
+					}
+				} else if (typeof max !== 'undefined') {
+					if (amount_yearly < max) {
+						level = name;
+						levelclass += num;
+						return false;
+					}
+				} else if (typeof min !== 'undefined') {
+					if (amount_yearly >= min) {
+						level = name;
+						levelclass += num;
+						return false;
+					}
+				}
+			});
+			$(options.level_indicator_selector, element).attr('class', levelclass);
+			$(options.level_name_selector).text(level.charAt(0).toUpperCase() + level.slice(1));
+
+			var review_level_benefits = this.getQueryStrings($(options.review_benefits_selector, element).attr('href'));
+			review_level_benefits = review_level_benefits['level'];
+			
+			var link = $(options.review_benefits_selector, element).attr('href');
+			link = link.replace(review_level_benefits, level);
+			$(options.review_benefits_selector).attr('href', link);
+			return level;
+		},
+
+		upsell: function(element, options, amount, frequency) {
+			var that = this;
+			var amount_monthly;
+			if (frequency === 12) {
+				amount_monthly = amount;
+			} else if (frequency === 1) {
+				amount_monthly = amount / frequency;
+			}
+
+			$.each(options.upsell, function(index, value) {
+				if (index === options.level) { // current level upsell
+					if (value !== true && amount_monthly < value) {
+						$(options.upsell_selector, element).hide();
+					}
+				}
+			});
+
+			$(options.upsell_btn_selector, element).click(function() {
+				var upsold = options.upsold;
+				$(options.level_amount_selector, element).text(upsold);
+				$(options.full_amount_selector, element).text(upsold);
+				$(this).remove();
+				that.checkLevel(element, options, upsold, frequency);
+				return false;
 			});
 		},
 
@@ -316,19 +433,19 @@
 		creditCardFields: function(element, options) {
 			if (typeof $.payment !== 'undefined') {
 				$('input[type="num"]').payment('restrictNumeric');
-				$('.credit-card-group input').focusin(function() {
+				$(options.credit_card_fieldset + ' input').focusin(function() {
 					$(this).parent().addClass('focus');
 				}).focusout(function() {
 					$(this).parent().removeClass('focus');
 				});
-				$('.credit-card-group').prepend('<span class="card-image"></span>');
+				$(options.credit_card_fieldset, element).prepend('<span class="card-image"></span>');
 
-				$('#credit-card-number').payment('formatCardNumber');
-				$('#card-expiration').payment('formatCardExpiry');
-				$('#card-cvv').payment('formatCardCVC');
+				$(options.cc_num_selector, element).payment('formatCardNumber');
+				$(options.cc_exp_selector, element).payment('formatCardExpiry');
+				$(options.cc_cvv_selector, element).payment('formatCardCVC');
 
-				$('#credit-card-number').on('keyup', function() {
-					var cardType = $.payment.cardType($('#credit-card-number').val());
+				$(options.cc_num_selector, element).on('keyup', function() {
+					var cardType = $.payment.cardType($(options.cc_num_selector, element).val());
 					//$('#credit-card-number').toggleInputError(!$.payment.validateCardNumber($('#credit-card-number').val()));
 					//if (cardType !== null) {
 					$('.card-image').attr('class', 'card-image ' + cardType);
