@@ -5,6 +5,7 @@ $(document).ready(function() {
 		'active' : 'panel--review',
 		'query' : 'step',
 		'percentage' : 0.05,
+		'pay_cc_processing_selector' : '#PaymentControl_cbPayFees',
 		'level_amount_selector' : '.amount .level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',

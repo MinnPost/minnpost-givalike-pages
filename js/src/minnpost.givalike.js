@@ -18,6 +18,7 @@
 		'active' : 'panel--review',
 		'query' : 'step',
 		'percentage' : 0.05,
+		'pay_cc_processing_selector' : '#PaymentControl_cbPayFees',
 		'level_amount_selector' : '.level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
@@ -280,6 +281,7 @@
 			var full_amount;
 			var that = this;
 			var remove = false;
+			$(this.options.pay_cc_processing_selector).parent().html('<a href="#" class="add-credit-card-processing">Add $<span class="processing-amount"></span></a> for credit card processing to each charge?');
 			$('.processing-amount').text(options.processing_fee);
 			//console.log('new amount is ' + options.new_amount);
 			if (reset === true) {
