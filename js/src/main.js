@@ -1,10 +1,5 @@
-/*$(function() {
-	
-});*/
-
 // main.js
 $(document).ready(function() {
-
 	// call plugin
 	$('.support--donate').minnpost_givalike({
 		'active' : 'panel--review',
@@ -16,6 +11,7 @@ $(document).ready(function() {
 		'level_indicator_selector' : 'h2.level',
 		'level_name_selector' : '.level-name',
 		'review_benefits_selector' : '.review-benefits',
+		'allow_upsell' : true,
 		'upsell_btn_selector' : '.btn--upsell',
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
@@ -33,5 +29,4 @@ $(document).ready(function() {
 		'cc_cvv_selector' : '#card-cvv',
 		'debug' : false
 	});
-
 });

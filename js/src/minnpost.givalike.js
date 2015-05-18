@@ -24,6 +24,7 @@
 		'level_indicator_selector' : 'h2.level',
 		'level_name_selector' : '.level-name',
 		'review_benefits_selector' : '.review-benefits',
+		'allow_upsell' : true,
 		'upsell_btn_selector' : '.btn--upsell',
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
@@ -85,7 +86,7 @@
 
 	Plugin.prototype = {
 
-		init: function() {
+		init: function(reset, amount) {
 
 			// Place initialization logic here
 			// You already have access to the DOM element and
@@ -95,11 +96,19 @@
 			// call them like so: this.yourOtherFunction(this.element, this.options).
 
 			// modify options as needed
-			this.options.amount = parseFloat($(this.options.level_amount_selector, this.element).text());
+			//var this.options.amount = '';
+			if (reset !== true) {
+				console.log('do not reset');
+				this.options.amount = parseFloat($(this.options.level_amount_selector, this.element).text());
+			} else {
+				console.log('reset here with ' + amount);
+				this.options.amount = amount;
+			}
 			this.options.frequency = parseFloat($(this.options.frequency_selector, this.element).data('year-freq'));
 			this.options.processing_percent = parseFloat(this.options.percentage);
 			this.options.processing_fee = this.options.amount * this.options.processing_percent;
 			this.options.new_amount = this.options.amount + this.options.processing_fee;
+			console.log('new amount is ' + this.options.new_amount);
 			this.options.processing_fee = parseFloat(this.options.processing_fee).toFixed(2);
 			this.options.upsell_amount = parseFloat($(this.options.upsell_amount_selector, this.element).text());
 			this.options.upsold = this.options.amount + this.options.upsell_amount;
@@ -132,8 +141,8 @@
 			}
 
 			this.paymentPanels(query_panel); // tabs
-			this.creditCardProcessingFees(this.options); // processing fees
-			this.options.level = this.checkLevel(this.element, this.options, this.options.amount, this.options.frequency); // check what level it is
+			this.creditCardProcessingFees(this.options, reset); // processing fees
+			this.options.level = this.checkLevel(this.element, this.options); // check what level it is
 			this.upsell(this.element, this.options, this.options.amount, this.options.frequency); // upsell to next level
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
@@ -171,10 +180,11 @@
 
 		loadAnalytics: function(options) {
 			var gaq = window._gaq;
+			var that = this;
 			if (gaq) {	// is gaq object present?
 				this.debug('we have analytics');									
 				jQuery.each(options, function( key, value ) {
-					this.debug('key is '+key+' and value is '+value);
+					that.debug('key is '+key+' and value is '+value);
 					if (typeof value === 'object') {
 						var onevent = options.on;
 						var label = options.label($(this));
@@ -198,9 +208,6 @@
 						});
 					}
 				}); // for each option
-
-				// Set the context for our deferred callback.
-				var that = this;
 
 				// Push data to google. do we still need this or is it replaced by line 275?
 				/* $.when(gaq.push(args)).done(
@@ -238,7 +245,7 @@
 				}
 			}
 			return b;
-		},
+		}, // getQueryStrings
 
 		getFullAddress: function() {
 			$('.geocomplete').click(function() {
@@ -249,14 +256,13 @@
 					detailsAttribute: attribute
 				});
 			});
-		},
+		}, // getFullAddress
 
 		paymentPanels: function(active) {
+			var that = this;
 			// make some tabs for form
 			$('.panel').hide();
 			$('#' + active).fadeIn();
-			var that = this;
-
 			// activate the tabs
 			$('.progress--donation li.' + active + ' a').addClass('active');
 			$('.progress--donation li a, a.btn.btn--next').click(function(event) {
@@ -268,28 +274,37 @@
 				$('.progress--donation li.' + query + ' a').addClass('active');
 				that.paymentPanels(query);		
 			});
-
 		}, // paymentPanels
 
-		creditCardProcessingFees: function(options) {
-			$('.processing-amount').text(options.processing_fee);
+		creditCardProcessingFees: function(options, reset) {
 			var full_amount;
-			$('.add-credit-card-processing').click(function() {
+			var that = this;
+			var remove = false;
+			$('.processing-amount').text(options.processing_fee);
+			//console.log('new amount is ' + options.new_amount);
+			if (reset === true) {
+				remove = false;
+				full_amount = that.options.amount;
+				$('.add-credit-card-processing').text('Add $' + that.options.processing_fee);
+			}
+			$('.add-credit-card-processing').click(function(event) {
 				$('.amount .level-amount').addClass('full-amount');
-				if (!$(this).hasClass('remove')) {
-					//$('.amount .level-amount').text(new_amount);
-					full_amount = options.new_amount;
+				if (!remove) {
+					remove = true;
+					console.log('new amount after click is ' + options.new_amount);
+					full_amount = that.options.new_amount;
 					$(this).text('Remove $' + options.processing_fee);
 				} else {
-					//$('.amount .level-amount').text(amount);
-					full_amount = options.amount;
+					remove = false;
+					full_amount = that.options.amount;
 					$(this).text('Add $' + options.processing_fee);
 				}
 				$(this).toggleClass('remove');
 				$(options.full_amount_selector).text(parseFloat(full_amount).toFixed(2));
-				return false;
+				event.stopPropagation();
+				event.preventDefault();
 			});
-		},
+		}, // creditCardProcessingFees
 
 		donateAnonymously: function(element, options) {
 			if ($(options.anonymous_selector, element).is(':checked')) {
@@ -305,19 +320,21 @@
 					$(options.name_selector + ' label:first', element).show();
 				}
 			});
-		},
+		}, // donateAnonymously
 
-		checkLevel: function(element, options, amount, frequency) {
-
+		checkLevel: function(element, options) {
+			var level = '';
+			var levelclass = 'level level--';
 			var amount_yearly;
+			var frequency = options.frequency;
+			var amount = options.amount;
+
 			if (frequency === 12) {
 				amount_yearly = amount * frequency;
 			} else if (frequency === 1) {
 				amount_yearly = amount;
 			}
-
-			var level = '';
-			var levelclass = 'level level--';
+			
 			$.each(options.levels, function(index, value) {
 				var name = value.name;
 				var num = index;
@@ -353,34 +370,42 @@
 			link = link.replace(review_level_benefits, level);
 			$(options.review_benefits_selector).attr('href', link);
 			return level;
-		},
+		}, // checkLevel
 
 		upsell: function(element, options, amount, frequency) {
-			var that = this;
-			var amount_monthly;
-			if (frequency === 12) {
-				amount_monthly = amount;
-			} else if (frequency === 1) {
-				amount_monthly = amount / frequency;
-			}
+			if (options.allow_upsell === true) {
+				var that = this;
+				var amount_monthly;
 
-			$.each(options.upsell, function(index, value) {
-				if (index === options.level) { // current level upsell
-					if (value !== true && amount_monthly < value) {
-						$(options.upsell_selector, element).hide();
-					}
+				if (frequency === 12) {
+					amount_monthly = amount;
+				} else if (frequency === 1) {
+					amount_monthly = amount / frequency;
 				}
-			});
 
-			$(options.upsell_btn_selector, element).click(function() {
-				var upsold = options.upsold;
-				$(options.level_amount_selector, element).text(upsold);
-				$(options.full_amount_selector, element).text(upsold);
-				$(this).remove();
-				that.checkLevel(element, options, upsold, frequency);
-				return false;
-			});
-		},
+				$.each(options.upsell, function(index, value) {
+					if (index === options.level) { // current level upsell
+						if (value !== true && amount_monthly < value) {
+							$(options.upsell_selector, element).hide();
+						}
+					}
+				});
+
+				$(options.upsell_btn_selector, element).click(function(event) {
+					var upsold = options.upsold;
+					that.options.amount = upsold;
+					console.log('click amount is ' + that.options.amount);
+					$(options.level_amount_selector, element).text(upsold);
+					$(options.full_amount_selector, element).text(upsold);
+					$(this).remove();
+					event.stopPropagation();
+					event.preventDefault();
+					that.init(true, upsold);
+				});
+			} else {
+				$(options.upsell_selector, element).hide();
+			}
+		}, // upsell
 
 		shippingAddress: function(element, options) {
 			if ($(options.use_for_shipping_selector, element).is(':checked')) {
@@ -395,7 +420,7 @@
 					$(options.shipping_address_selector, element).show();
 				}
 			});
-		},
+		}, // shippingAddress
 
 		allowMinnpostAccount: function(element, options) {
 			if ($(options.create_mp_selector, element).is(':checked')) {
@@ -428,7 +453,7 @@
 				$(this).next('.form-help').toggle();
 				return false;
 			});
-		},
+		}, // allowMinnpostAccount
 
 		creditCardFields: function(element, options) {
 			if (typeof $.payment !== 'undefined') {
@@ -457,7 +482,7 @@
 				//$('.cc-brand').text(cardType);
 
 			}
-		},
+		}, // creditCardFields
 
 	}; // plugin.prototype
 
