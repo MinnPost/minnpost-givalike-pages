@@ -614,6 +614,8 @@ $(document).ready(function() {
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
 		'honor_selector' : '.honor',
+		'notify_selector' : '#notify',
+		'notify_field_selector' : '.form-item--memory-notify',
 		'name_selector' : '.form-item--display-name',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
 		'shipping_address_selector' : '.form-item--shipping-address',
