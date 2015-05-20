@@ -29,6 +29,12 @@
 		'upsell_btn_selector' : '.btn--upsell',
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
+		'swag_selector' : '.swag',
+		'separate_swag_selector' : 'fieldset.swag--separate',
+		'separate_swag_redeem' : '.swag-redeem--separate',
+		'atlantic_status' : 'input[name="atlantic_status"]',
+		'atlantic_existing' : '#atlantic_existing',
+		'atlantic_selector' : '.form-item--atlantic_id',
 		'name_selector' : '.form-item--display-name',
 		'honor_selector' : '.honor',
 		'notify_selector' : '#notify',
@@ -143,9 +149,11 @@
 
 			this.paymentPanels(query_panel); // tabs
 			this.creditCardProcessingFees(this.options, reset); // processing fees
-			this.options.level = this.checkLevel(this.element, this.options); // check what level it is
+			this.options.level = this.checkLevel(this.element, this.options, 'name'); // check what level it is
+			this.options.levelnum = this.checkLevel(this.element, this.options, 'num'); // check what level it is as a number
 			this.upsell(this.element, this.options, this.options.amount, this.options.frequency); // upsell to next level
 			this.honorOrMemory(this.element, this.options); // in honor or in memory of someone
+			this.swag(this.element, this.options); // manage swag display
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options); // option for creating minnpost account
@@ -323,8 +331,9 @@
 			});
 		}, // donateAnonymously
 
-		checkLevel: function(element, options) {
+		checkLevel: function(element, options, returnvalue) {
 			var level = '';
+			var levelnum = 0;
 			var levelclass = 'level level--';
 			var amount_yearly;
 			var frequency = options.frequency;
@@ -344,18 +353,21 @@
 				if (typeof min !== 'undefined' && typeof max !== 'undefined') {
 					if (amount_yearly >= min && amount_yearly < max) {
 						level = name;
+						levelnum = num;
 						levelclass += num;
 						return false;
 					}
 				} else if (typeof max !== 'undefined') {
 					if (amount_yearly < max) {
 						level = name;
+						levelnum = num;
 						levelclass += num;
 						return false;
 					}
 				} else if (typeof min !== 'undefined') {
 					if (amount_yearly >= min) {
 						level = name;
+						levelnum = num;
 						levelclass += num;
 						return false;
 					}
@@ -370,7 +382,11 @@
 			var link = $(options.review_benefits_selector, element).attr('href');
 			link = link.replace(review_level_benefits, level);
 			$(options.review_benefits_selector).attr('href', link);
-			return level;
+			if (returnvalue === 'name') {
+				return level;
+			} else if (returnvalue === 'num') {
+				return levelnum;	
+			}
 		}, // checkLevel
 
 		upsell: function(element, options, amount, frequency) {
@@ -443,6 +459,37 @@
 			});
 
 		}, // honorOrMemory
+
+		swag: function(element, options) {
+			$(options.swag_selector, element).hide();
+			var currentlevel = options.levelnum;
+			$(options.swag_selector, element).each(function() {
+				var min = $(this).attr('class').slice(-1);
+				if (currentlevel >= min) {
+					$(this).show();
+				}
+			});
+
+			$(options.separate_swag_selector, element).hide();
+			$(options.separate_swag_redeem, element).click(function() {
+				$(options.separate_swag_selector, element).toggle();
+				return false;
+			});
+
+			if ($(options.atlantic_existing, element).is(':checked')) {
+				$(options.atlantic_selector, element).show();
+			} else {
+				$(options.atlantic_selector, element).hide();
+			}
+			$(options.atlantic_status, element).change(function() {
+				if ($(options.atlantic_existing, element).is(':checked')) {
+					$(options.atlantic_selector, element).show();
+				} else {
+					$(options.atlantic_selector, element).hide();
+				}
+			});
+
+		}, // swag
 
 		shippingAddress: function(element, options) {
 			if ($(options.use_for_shipping_selector, element).is(':checked')) {

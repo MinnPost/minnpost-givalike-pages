@@ -124,7 +124,7 @@
         <section class="panel panel--form" id="panel--review">
             <div class="support support--summary">
               <fieldset class="amount">
-                <h1>$<span class="level-amount">4</span> <span class="frequency" data-year-freq="12">Monthly</span> Donation</h1> <!-- load server-side from parsing querystring -->
+                <h1>$<span class="level-amount">19</span> <span class="frequency" data-year-freq="12">Monthly</span> Donation</h1> <!-- load server-side from parsing querystring -->
                 <ul class="actions actions--edit-amount clear-block">
                   <li><a href="https://www.minnpost.com/support/">Edit</a></li>
                   <li><input type="checkbox" name="PaymentControl$cbPayFees" id="PaymentControl_cbPayFees"></li><!-- gets processed by javascript -->
@@ -156,11 +156,21 @@
               </fieldset>
               <fieldset class="benefits">
                 <h2 class="level level--2">MinnPost <span class="level-name">Silver</span></h2>  <!-- load server-side from parsing querystring -->
-                <p>Choose your member benefits below. You can also <a href="https://www.minnpost.com/support/member-benefits/?level=silver" class="review-benefits">review all MinnPost <span class="level-name">Silver</span> benefits</a>.</p>  <!-- load server-side from parsing querystring -->
-                <label class="swag swag--silver"><input type="radio" name="swag" value="mug" id="swag-mug"> <div><img src="/images/mug.png" alt="Coffee Mug"></div></label>
-                <label class="swag swag--silver"><input type="radio" name="swag" value="water bottle" id="swag-bottle"> <div><img src="/images/waterbottle.png" alt="Water Bottle"></div></label>
-                <label class="swag swag--silver"><input type="radio" name="swag" value="no" id="swag-no"> <div>Give entire amount to MinnPost</div></label>
-                <!-- maybe load all swag from server; activate the eligible ones with javascript. not a huge deal here since it gets validated by person anyway -->
+                <p><span class="swag swag--2">Choose your member benefits below.</span> You can <span class="swag swag--2">also</span> <a href="https://www.minnpost.com/support/member-benefits/?level=silver" class="review-benefits">review all MinnPost <span class="level-name">Silver</span> benefits</a>.</p>  <!-- load server-side from parsing querystring -->
+                <label class="swag swag--2"><input type="radio" name="swag" value="mug" id="swag-mug"> <div><img src="/images/mug.png" alt="Coffee Mug"></div></label>
+                <label class="swag swag--2"><input type="radio" name="swag" value="water bottle" id="swag-bottle"> <div><img src="/images/waterbottle.png" alt="Water Bottle"></div></label>
+                <label class="swag swag--2"><input type="radio" name="swag" value="no" id="swag-no"> <div>Give entire amount to MinnPost</div></label>
+                <p class="swag swag--separate swag--3"><strong>MinnPost Gold and Platinum members</strong> are also entitled to a 1-year subscription to The Atlantic. You can <a href="#" class="swag-redeem--separate swag-redeem--atlantic">redeem this</a> with each qualifying year.</p>
+                <fieldset class="swag swag--3 swag--separate swag--atlantic">
+                  <label><input type="radio" value="new" id="atlantic_new" name="atlantic_status"> Start a new subscription</label>
+                  <label><input type="radio" value="existing" id="atlantic_existing" name="atlantic_status"> Extend an existing subscription</label>
+                  <div class="form-item form-item--atlantic_id" >
+                    <label>Existing Subscription ID
+                    <input type="text" value="" id="atlantic_id" name="atlantic_id" autocorrect="off" autocapitalize="off" required="required">
+                    </label>
+                  </div>
+                </fieldset>
+                <!-- maybe load all swag from server; activate the eligible ones with javascript. not a huge deal if js hiccups here since it gets validated by person anyway -->
               </fieldset>
             </div>
              <!-- load upsell options server-side from parsing querystring -->

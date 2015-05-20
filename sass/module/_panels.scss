@@ -1,11 +1,8 @@
-.js .panel, .js .panel .honor fieldset {
+.js .panel, .js .panel .honor fieldset, .js .swag.swag--separate, .js .swag .form-item--atlantic_id {
 	display: none;
 }
-.no-js .panel {
+.no-js .panel, .no-js .honor fieldset, .no-js .swag .form-item--atlantic_id {
 	display: block;
-	.honor fieldset {
-		display: block;
-	}
 }
 .panel {
 	h1, h2, h3 {
@@ -67,7 +64,7 @@
 		}
 	}
 	.benefits {
-		label {
+		> label {
 			float: left;
 			max-width: 100px;
 			width: 32%;
@@ -103,6 +100,9 @@
 		input:checked ~ div {
 		  background: $minnpost-blue;
 		  color: $white;
+		}
+		p.swag {
+			clear: both;
 		}
 	}
 }
