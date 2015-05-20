@@ -129,7 +129,30 @@
                   <li><a href="https://www.minnpost.com/support/">Edit</a></li>
                   <li><input type="checkbox" name="PaymentControl$cbPayFees" id="PaymentControl_cbPayFees"></li><!-- gets processed by javascript -->
                 </ul>
-                <p class="honor"><a href="#" class="in-honor">in honor</a> or <a href="#" class="in-memory">in memory</a>?</p> <!-- TODO: put this in there -->
+                <div class="honor">
+                  <p><a href="#" class="in-honor">in honor</a> or <a href="#" class="in-memory">in memory</a>?</p>
+                  <fieldset class="in-honor">
+                    <h3>In honor of</h3>
+                    <div class="form-item form-item--honoree-name">
+                      <label>Name <input type="text" id="PaymentControl_txtTributeName" name="PaymentControl$txtTributeName"></label>
+                    </div>
+                    <div class="form-item form-item--honoree-email">
+                      <label>Email (we will send a message if you put an address here) <input type="email" id="PaymentControl_txtNotifyEmail" name="PaymentControl$txtNotifyEmail"></label>
+                      <label>Include Amount? <input type="checkbox" name="PaymentControl$includeAmount" id="PaymentControl_includeAmount"></label>
+                    </div>
+                  </fieldset>
+                  <fieldset class="in-memory">
+                    <h3>In memory of</h3>
+                    <div class="form-item form-item--memory-name">
+                      <label>Name <input type="text" id="PaymentControl_txtTributeName" name="PaymentControl$txtTributeName"></label>
+                      <label>Notify someone? <input type="checkbox" name="notify" id="notify"></label>
+                    </div>
+                    <div class="form-item form-item--memory-notify">
+                      <label>Email (we will send a message if you put an address here) <input type="email" id="PaymentControl_txtNotifyEmail" name="PaymentControl$txtNotifyEmail"></label>
+                      <label>Include Amount? <input type="checkbox" name="PaymentControl$includeAmount" id="PaymentControl_includeAmount"></label>
+                    </div>
+                  </fieldset>
+                </div> <!-- TODO: put this in there -->
               </fieldset>
               <fieldset class="benefits">
                 <h2 class="level level--2">MinnPost <span class="level-name">Silver</span></h2>  <!-- load server-side from parsing querystring -->

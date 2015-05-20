@@ -16,6 +16,7 @@ $(document).ready(function() {
 		'upsell_btn_selector' : '.btn--upsell',
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
+		'honor_selector' : '.honor',
 		'name_selector' : '.form-item--display-name',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
 		'shipping_address_selector' : '.form-item--shipping-address',

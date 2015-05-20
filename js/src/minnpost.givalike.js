@@ -30,6 +30,9 @@
 		'upsell_selector' : '.well--upsell',
 		'upsell_amount_selector' : '.upsell-amount',
 		'name_selector' : '.form-item--display-name',
+		'honor_selector' : '.honor',
+		'notify_selector' : '#notify',
+		'notify_field_selector' : '.form-item--memory-notify',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
@@ -99,17 +102,14 @@
 			// modify options as needed
 			//var this.options.amount = '';
 			if (reset !== true) {
-				console.log('do not reset');
 				this.options.amount = parseFloat($(this.options.level_amount_selector, this.element).text());
 			} else {
-				console.log('reset here with ' + amount);
 				this.options.amount = amount;
 			}
 			this.options.frequency = parseFloat($(this.options.frequency_selector, this.element).data('year-freq'));
 			this.options.processing_percent = parseFloat(this.options.percentage);
 			this.options.processing_fee = this.options.amount * this.options.processing_percent;
 			this.options.new_amount = this.options.amount + this.options.processing_fee;
-			console.log('new amount is ' + this.options.new_amount);
 			this.options.processing_fee = parseFloat(this.options.processing_fee).toFixed(2);
 			this.options.upsell_amount = parseFloat($(this.options.upsell_amount_selector, this.element).text());
 			this.options.upsold = this.options.amount + this.options.upsell_amount;
@@ -145,6 +145,7 @@
 			this.creditCardProcessingFees(this.options, reset); // processing fees
 			this.options.level = this.checkLevel(this.element, this.options); // check what level it is
 			this.upsell(this.element, this.options, this.options.amount, this.options.frequency); // upsell to next level
+			this.honorOrMemory(this.element, this.options); // in honor or in memory of someone
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options); // option for creating minnpost account
@@ -283,7 +284,6 @@
 			var remove = false;
 			$(this.options.pay_cc_processing_selector).parent().html('<a href="#" class="add-credit-card-processing">Add $<span class="processing-amount"></span></a> for credit card processing to each charge?');
 			$('.processing-amount').text(options.processing_fee);
-			//console.log('new amount is ' + options.new_amount);
 			if (reset === true) {
 				remove = false;
 				full_amount = that.options.amount;
@@ -293,7 +293,6 @@
 				$('.amount .level-amount').addClass('full-amount');
 				if (!remove) {
 					remove = true;
-					console.log('new amount after click is ' + options.new_amount);
 					full_amount = that.options.new_amount;
 					$(this).text('Remove $' + options.processing_fee);
 				} else {
@@ -396,7 +395,6 @@
 				$(options.upsell_btn_selector, element).click(function(event) {
 					var upsold = options.upsold;
 					that.options.amount = upsold;
-					console.log('click amount is ' + that.options.amount);
 					$(options.level_amount_selector, element).text(upsold);
 					$(options.full_amount_selector, element).text(upsold);
 					$(this).remove();
@@ -408,6 +406,43 @@
 				$(options.upsell_selector, element).hide();
 			}
 		}, // upsell
+
+		honorOrMemory: function(element, options) {
+			var that = this;
+			var key_escape = 27;
+
+			$(options.honor_selector + ' fieldset').prepend('<a href="#" class="close">Close</a>');
+			$(options.honor_selector + ' p a', element).click(function() {
+				var link_class = $(this).attr('class');
+				$('fieldset.' + link_class, element).addClass('visible').show();
+				return false;
+			});
+			$(options.honor_selector + ' fieldset a.close', element).click(function() {
+				var link_class = $(this).parent().attr('class').substring(0, $(this).parent().attr('class').length - 8);
+				$('fieldset.' + link_class, element).removeClass('visible').hide();
+				return false;
+			});
+
+			$(document).keyup(function(e) {
+				if (e.keyCode === key_escape) {
+					$('fieldset.visible', element).removeClass('visible').hide();
+				}
+			});
+
+			if ($(options.notify_selector, element).is(':checked')) {
+				$(options.notify_field_selector, element).show();
+			} else {
+				$(options.notify_field_selector, element).hide();
+			}
+			$(options.notify_selector, element).change(function() {
+				if ($(this).is(':checked')) {
+					$(options.notify_field_selector, element).show();
+				} else {
+					$(options.notify_field_selector, element).hide();
+				}
+			});
+
+		}, // honorOrMemory
 
 		shippingAddress: function(element, options) {
 			if ($(options.use_for_shipping_selector, element).is(':checked')) {
