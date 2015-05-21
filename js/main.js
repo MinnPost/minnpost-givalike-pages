@@ -602,7 +602,7 @@ $(document).ready(function() {
 		'active' : 'panel--review',
 		'query' : 'step',
 		'percentage' : 0.05,
-		'pay_cc_processing_selector' : '#PaymentControl_cbPayFees',
+		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
 		'level_amount_selector' : '.amount .level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
@@ -624,6 +624,7 @@ $(document).ready(function() {
 		'atlantic_selector' : '.form-item--atlantic_id',
 		'name_selector' : '.form-item--display-name',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
+		'needs_shipping_selector' : '.swag--shipping',
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
 		'create_mp_selector' : '#creatempaccount',
@@ -656,7 +657,7 @@ $(document).ready(function() {
 		'active' : 'panel--review',
 		'query' : 'step',
 		'percentage' : 0.05,
-		'pay_cc_processing_selector' : '#PaymentControl_cbPayFees',
+		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
 		'level_amount_selector' : '.level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
@@ -678,6 +679,7 @@ $(document).ready(function() {
 		'notify_selector' : '#notify',
 		'notify_field_selector' : '.form-item--memory-notify',
 		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
+		'needs_shipping_selector' : '.swag--shipping',
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
 		'create_mp_selector' : '#creatempaccount',
@@ -940,13 +942,13 @@ $(document).ready(function() {
 				if (!remove) {
 					remove = true;
 					full_amount = that.options.new_amount;
-					$(this).text('Remove $' + options.processing_fee);
+					$('.add-credit-card-processing').text('Remove $' + options.processing_fee);
 				} else {
 					remove = false;
 					full_amount = that.options.amount;
-					$(this).text('Add $' + options.processing_fee);
+					$('.add-credit-card-processing').text('Add $' + options.processing_fee);
 				}
-				$(this).toggleClass('remove');
+				$('.add-credit-card-processing').toggleClass('remove');
 				$(options.full_amount_selector).text(parseFloat(full_amount).toFixed(2));
 				event.stopPropagation();
 				event.preventDefault();
@@ -1130,18 +1132,33 @@ $(document).ready(function() {
 		}, // swag
 
 		shippingAddress: function(element, options) {
-			if ($(options.use_for_shipping_selector, element).is(':checked')) {
-				$(options.shipping_address_selector, element).hide();
-			} else {
-				$(options.shipping_address_selector, element).show();
-			}
-			$(options.use_for_shipping_selector, element).change(function() {
-				if ($(this).is(':checked')) {
+			var that = this;
+			var show_shipping = false;
+			show_shipping = !!$(options.needs_shipping_selector + ':checked', element).length;
+
+			$(options.needs_shipping_selector, element).change(function() {
+				that.shippingAddress(element, options);
+			});
+
+			if ($(options.needs_shipping_selector, element).length > 0 && show_shipping === true ) {
+				$(options.use_for_shipping_selector, element).parent().show();
+				if ($(options.use_for_shipping_selector, element).is(':checked')) {
 					$(options.shipping_address_selector, element).hide();
 				} else {
 					$(options.shipping_address_selector, element).show();
 				}
-			});
+				$(options.use_for_shipping_selector, element).change(function() {
+					if ($(this).is(':checked')) {
+						$(options.shipping_address_selector, element).hide();
+					} else {
+						$(options.shipping_address_selector, element).show();
+					}
+				});
+			} else {
+				$(options.shipping_address_selector, element).hide();
+				$(options.use_for_shipping_selector, element).parent().hide();
+			}
+			
 		}, // shippingAddress
 
 		allowMinnpostAccount: function(element, options) {
