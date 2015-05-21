@@ -414,6 +414,7 @@
 					that.options.amount = upsold;
 					$(options.level_amount_selector, element).text(upsold);
 					$(options.full_amount_selector, element).text(upsold);
+					$('#amount').val(upsold);
 					$(this).remove();
 					event.stopPropagation();
 					event.preventDefault();
