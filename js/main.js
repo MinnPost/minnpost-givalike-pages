@@ -793,7 +793,7 @@ $(document).ready(function() {
 			this.options.levelnum = this.checkLevel(this.element, this.options, 'num'); // check what level it is as a number
 			this.upsell(this.element, this.options, this.options.amount, this.options.frequency); // upsell to next level
 			this.honorOrMemory(this.element, this.options); // in honor or in memory of someone
-			this.swag(this.element, this.options); // manage swag display
+			this.swag(this.element, this.options, false); // manage swag display
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options); // option for creating minnpost account
@@ -1100,33 +1100,32 @@ $(document).ready(function() {
 
 		}, // honorOrMemory
 
-		swag: function(element, options) {
-			$(options.swag_selector, element).hide();
-			var currentlevel = options.levelnum;
-			$(options.swag_selector, element).each(function() {
-				var min = $(this).attr('class').slice(-1);
-				if (currentlevel >= min) {
-					$(this).show();
-				}
-			});
+		swag: function(element, options, change) {
+			
+			var that = this;
+			var currentlevel = that.options.levelnum;
 
-			$(options.separate_swag_selector, element).hide();
-			$(options.separate_swag_redeem, element).click(function() {
-				$(options.separate_swag_selector, element).toggle();
-				return false;
-			});
+			if (change === false) { // keep this from repeating
+				$(options.swag_selector, element).hide(); // hide all the swag items first
+				$(options.swag_selector, element).filter(function(index) { // only show items that are less than or equal to donation level
+					return $(this).attr('class').slice(-1) <= currentlevel;
+				}).show();
 
-			if ($(options.atlantic_existing, element).is(':checked')) {
+				$(options.separate_swag_redeem, element).click(function(event) { // if user clicks to redeem a separate item (ie atlantic)
+					event.stopImmediatePropagation();
+					$(options.separate_swag_selector, element).toggle(); // show the options there
+					return false;
+				});
+			}
+
+			if ($(options.atlantic_existing, element).is(':checked')) { // if user has existing atlantic subscription
 				$(options.atlantic_selector, element).show();
 			} else {
 				$(options.atlantic_selector, element).hide();
 			}
-			$(options.atlantic_status, element).change(function() {
-				if ($(options.atlantic_existing, element).is(':checked')) {
-					$(options.atlantic_selector, element).show();
-				} else {
-					$(options.atlantic_selector, element).hide();
-				}
+
+			$(options.atlantic_status, element).change(function() { // if user clicks one of the atlantic radio buttons
+				that.swag(element, options, true);
 			});
 
 		}, // swag
