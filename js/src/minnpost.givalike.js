@@ -43,6 +43,7 @@
 		'needs_shipping_selector' : '.swag--shipping',
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
+		'email_field_selector' : '#PaymentControl_txtEmail',
 		'create_mp_selector' : '#creatempaccount',
 		'password_selector' : '.form-item--password',
 		'billing_selector' : 'fieldset.billing',
@@ -157,7 +158,7 @@
 			this.swag(this.element, this.options, false); // manage swag display
 			this.donateAnonymously(this.element, this.options); // anonymous
 			this.shippingAddress(this.element, this.options); // shipping address
-			this.allowMinnpostAccount(this.element, this.options); // option for creating minnpost account
+			this.allowMinnpostAccount(this.element, this.options, false); // option for creating minnpost account
 			this.creditCardFields(this.element, this.options); // do stuff with the credit card fields
 
 		}, // init
@@ -509,11 +510,7 @@
 					$(options.shipping_address_selector, element).show();
 				}
 				$(options.use_for_shipping_selector, element).change(function() {
-					if ($(this).is(':checked')) {
-						$(options.shipping_address_selector, element).hide();
-					} else {
-						$(options.shipping_address_selector, element).show();
-					}
+					that.shippingAddress(element, options);
 				});
 			} else {
 				$(options.shipping_address_selector, element).hide();
@@ -522,7 +519,33 @@
 			
 		}, // shippingAddress
 
-		allowMinnpostAccount: function(element, options) {
+		allowMinnpostAccount: function(element, options, changed) {
+			var that = this;
+			var account_exists = false;
+
+			function doneTyping () {
+				var email = $(options.email_field_selector, element).val();
+				account_exists = that.checkMinnpostAccountExists(element, options, email);
+			}
+
+			$(options.create_mp_selector, element).on('change', function() {
+				doneTyping();
+			});
+
+			//setup before functions
+			var typingTimer;                //timer identifier
+			var doneTypingInterval = 5000;  //time in ms, 5 second for example
+
+			//on keyup, start the countdown
+			$(options.email_field_selector, element).keyup(function(){
+				clearTimeout(typingTimer);
+				if ($(options.email_field_selector, element).val) {
+					typingTimer = setTimeout(doneTyping, doneTypingInterval);
+				}
+			});
+
+			//user is "finished typing," do something
+
 			if ($(options.create_mp_selector, element).is(':checked')) {
 				$(options.password_selector, element).show();
 			} else {
@@ -530,30 +553,57 @@
 			}
 
 			$(options.create_mp_selector, element).change(function() {
-				if ($(this).is(':checked')) {
-					$(options.password_selector, element).show();
-				} else {
-					$(options.password_selector, element).hide();
-				}
+				that.allowMinnpostAccount(element, options, true);
 			});
 
-			// allow users to show plain text, or to see pw criteria
-			$(options.password_selector, element).append('<div class="help-link"><span>Password help</span></div><div class="form-help">Password must be at least 6 characters.</div><label class="additional-option"><input type="checkbox" name="showpassword" id="showpassword"> Show password</label>');
+			if (changed === false) {
+				// allow users to show plain text, or to see pw criteria
+				$(options.password_selector, element).append('<div class="help-link"><span>Password help</span></div><div class="form-help">Password must be at least 6 characters.</div><label class="additional-option"><input type="checkbox" name="showpassword" id="showpassword"> Show password</label>');
+				$(options.create_mp_selector, element).parent().before('<p class="account-exists success">There is already a MinnPost.com account with this email.</p>');
+				$('.account-exists').hide();
+				$('#showpassword').click(function() {
+					if ($(this).is(':checked')) {
+						$('#password').get(0).type = 'text';
+					} else {
+						$('#password').get(0).type = 'password';
+					}
+				});
 
-			$('#showpassword').click(function() {
-				if ($(this).is(':checked')) {
-					$('#password').get(0).type = 'text';
-				} else {
-					$('#password').get(0).type = 'password';
-				}
-			});
-
-			$('.form-item .form-help').hide();
+				$('.form-item .form-help').hide();
+			}
 			$('.form-item--with-help label, .form-item--with-help input').next('.help-link').click(function() {
 				$(this).next('.form-help').toggle();
 				return false;
 			});
 		}, // allowMinnpostAccount
+
+		checkMinnpostAccountExists: function(element, options, email) {			
+			var user = {
+				email: email
+			};
+			$.ajax({
+				method: 'POST',
+				url: 'http://minnpost.dev/accounts/exists',
+				data: user
+			}).done(function( data ) {
+				if (data.status === 'success' && data.reason === 'user exists') {
+					if ($(options.create_mp_selector, element).is(':checked')) {
+						$(options.password_selector, element).hide();
+						$(options.create_mp_selector, element).parent().hide();
+						$('.account-exists', element).show();
+					} else {
+						$(options.password_selector, element).show();
+						$(options.create_mp_selector, element).parent().show();
+						$('.account-exists', element).hide();
+					}
+				} else {
+					$(options.password_selector, element).show();
+					$(options.create_mp_selector, element).parent().show();
+					$('.account-exists', element).hide();
+					return false;
+				}
+			});
+		}, // checkMinnpostAccountExists
 
 		creditCardFields: function(element, options) {
 			if (typeof $.payment !== 'undefined') {

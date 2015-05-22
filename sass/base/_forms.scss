@@ -25,6 +25,10 @@ select {
   font-size: $base-font-size;
 }
 
+.success {
+  color: $minnpost-green;
+}
+
 label {
   font-weight: normal;
   margin-bottom: $small-spacing;

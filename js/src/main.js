@@ -30,6 +30,7 @@ $(document).ready(function() {
 		'needs_shipping_selector' : '.swag--shipping',
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
+		'email_field_selector' : '#PaymentControl_txtEmail',
 		'create_mp_selector' : '#creatempaccount',
 		'password_selector' : '.form-item--password',
 		'billing_selector' : 'fieldset.billing',
@@ -38,6 +39,6 @@ $(document).ready(function() {
 		'cc_num_selector' : '#credit-card-number',
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
-		'debug' : false
+		'debug' : true
 	});
 });
