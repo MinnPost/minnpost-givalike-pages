@@ -39,6 +39,7 @@ $(document).ready(function() {
 		'cc_num_selector' : '#credit-card-number',
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
+		'payment_button_selector' : '#submit',
 		'debug' : true
 	});
 });

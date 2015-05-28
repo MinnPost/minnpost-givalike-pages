@@ -52,6 +52,7 @@
 		'cc_num_selector' : '#credit-card-number',
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
+		'payment_button_selector' : '#submit',
 		'levels' : {
 			1 : {
 				'name' : 'bronze',
@@ -160,6 +161,8 @@
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options, false); // option for creating minnpost account
 			this.creditCardFields(this.element, this.options); // do stuff with the credit card fields
+
+			this.validateAndSubmit(this.element, this.options); // validate and submit the form
 
 		}, // init
 
@@ -633,6 +636,12 @@
 
 			}
 		}, // creditCardFields
+
+		validateAndSubmit: function(element, options) {
+			$(options.payment_button_selector, element).click(function() {
+				// validate and 
+			});
+		}, // validateAndSubmit
 
 	}; // plugin.prototype
 

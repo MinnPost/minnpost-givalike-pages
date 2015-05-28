@@ -636,6 +636,7 @@ $(document).ready(function() {
 		'cc_num_selector' : '#credit-card-number',
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
+		'payment_button_selector' : '#submit',
 		'debug' : true
 	});
 });;// the semi-colon before function invocation is a safety net against concatenated
@@ -692,6 +693,7 @@ $(document).ready(function() {
 		'cc_num_selector' : '#credit-card-number',
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
+		'payment_button_selector' : '#submit',
 		'levels' : {
 			1 : {
 				'name' : 'bronze',
@@ -800,6 +802,8 @@ $(document).ready(function() {
 			this.shippingAddress(this.element, this.options); // shipping address
 			this.allowMinnpostAccount(this.element, this.options, false); // option for creating minnpost account
 			this.creditCardFields(this.element, this.options); // do stuff with the credit card fields
+
+			this.validateAndSubmit(this.element, this.options); // validate and submit the form
 
 		}, // init
 
@@ -1273,6 +1277,12 @@ $(document).ready(function() {
 
 			}
 		}, // creditCardFields
+
+		validateAndSubmit: function(element, options) {
+			$(options.payment_button_selector, element).click(function() {
+				// validate and 
+			});
+		}, // validateAndSubmit
 
 	}; // plugin.prototype
 
