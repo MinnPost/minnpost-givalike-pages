@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title>MinnPost Givalike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="//s3.amazonaws.com/data.minnpost/projects/minnpost-styles/0.0.4/minnpost-styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        img {
+            max-height: 100%;
+        }
+        .mp header {
+            margin-bottom: 1.5em;
+        }
+        .mp section {
+            margin-bottom: 2.5em;
+        }
+        header a, header img {
+            display: inline-block;
+        }
+        header > a.logo {
+            /*height: 30px;*/
+            margin: 0.5em;
+            width: auto;
+        }
+        .mp table {
+            margin-bottom: 2.5em;
+            width: auto;
+        }
+        table caption {
+            text-align: left;
+        }
+        table .subscribe {
+            width: 1em;
+        }
+        table .name {
+            width: 45%;
+        }
+        .mp .xlarge {
+            margin-bottom: 0.25em;
+        }
+        .mp small {
+            display: block;
+            margin-top: 0.5em;
+        }
+        .mp label {
+            font-weight: normal;
+            display: block;
+        }
+        .mp label.required {
+            font-weight: bold;
+        }
+        .mp .error br {
+            display: none;
+        }
+        .mp .errorText {
+            margin-top: 0.25em;
+            color: #c00;
+        }
+    </style>
+</head>
+<body class="mp">
+
+    <header class="minnpost-page-container">
+        <a href="#" class="logo clearfix">
+            <img src="http://www.minnpost.com/sites/default/themes/siteskin/inc/images/logo.png" alt="MinnPost">
+        </a>
+        
+    </header>
+
+    <main class="minnpost-page-container">
+        <div>
+        </div>
+    </main>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+<script>
+$(document).ready(function() {
+    var user = {
+        email: 'mynameisasherlev1@gmail.com',
+        first: 'Asher1',
+        last: 'Lev1',
+        password: 'asdfjkl;',
+        city: 'Brooklyn',
+        state: 'NY'
+    }
+
+    $.ajax({
+      method: "POST",
+      url: "http://minnpost.dev/accounts/create",
+      data: user
+    }).done(function( data ) {
+        $('main > div').text('status is ' + data.status + ' and reason is ' + data.reason + ' and uid is ' + data.uid);
+    });
+
+});
+
+</script>
+
+</body>
+</html>
