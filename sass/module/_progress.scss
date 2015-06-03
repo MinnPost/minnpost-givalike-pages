@@ -14,7 +14,7 @@
 		flex: 1;
 		position: relative;
 	}
-	a {
+	a, span {
 		color: $white;
 		font-family: $helvetica;
 		display: block;
@@ -22,12 +22,12 @@
 		text-decoration: none;
 		transition: background-color 0.1s linear;
 		border-right: 1px solid $gray-lightest;
-		&:hover, &:focus, &:active, &.active {
-			background: $gray-dark;
-		}
 		font-size: $h6-size;
 	}
-	a::before {
+	a:hover, a:focus, a:active, a.active, span.active {
+		background: $gray-dark;
+	}
+	a::before, span::before {
 		content: none;
 	    counter-increment: li;
 	    font-size: $h1-size;
@@ -43,11 +43,11 @@
 // media queries
 @media screen and (min-width: $small-screen) {
 	.progress {
-		a {
+		a, span {
 			font-size: $h6-size;
 			padding: $small-space 0 $small-space 3em;
 		}
-		a::before {
+		a::before, span::before {
 			content: counter(li, decimal);
 		    font-size: $h1-size;
 		    top: -0.15em;
@@ -56,11 +56,11 @@
 }
 @media screen and (min-width: $medium-screen) {
 	.progress {
-		a {
+		a, span {
 			font-size: $h5-size;
 			padding: $small-space 0 $small-space 3em;
 		}
-		a::before {
+		a::before, span::before {
 		    font-size: $h1-size;
 		}
 	}

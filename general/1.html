@@ -111,14 +111,14 @@
       <ol>
         <li class="panel--review"><a href="1.html?step=panel--review">Review</a></li>
         <li class="panel--pay"><a href="1.html?step=panel--pay">Payment</a></li>
-        <li class="panel--confirmation"><a href="1.html?step=panel--confirmation">Thank You</a></li>
+        <li class="panel--confirmation"><span>Thank You</span></li>
       </ol>
     </div>
   </section>
 
   <main>
     <div class="wrapper">
-      <form class="support support--donate" method="post">
+      <form class="support support--donate" method="post" id="donate">
         <input type="hidden" name="amount" id="amount" value="9"> <!-- load server-side from querystring -->
         <input type="hidden" name="recurring" id="recurring" value="monthly"> <!-- load server-side from querystring -->
         <section class="panel panel--form" id="panel--review">
@@ -166,7 +166,7 @@
                   <label><input type="radio" value="existing" id="atlantic_existing" name="atlantic_status" class="swag--shipping"> Extend an existing subscription</label>
                   <div class="form-item form-item--atlantic_id" >
                     <label>Existing Subscription ID
-                    <input type="text" value="" id="atlantic_id" name="atlantic_id" autocorrect="off" autocapitalize="off" required="required">
+                    <input type="text" value="" id="atlantic_id" name="atlantic_id" autocorrect="off" autocapitalize="off">
                     </label>
                   </div>
                 </fieldset>
@@ -289,7 +289,7 @@
         </section>
 
         <section class="panel panel--form" id="panel--confirmation">
-          
+          Thank you.
         </section>
 
       </form>
