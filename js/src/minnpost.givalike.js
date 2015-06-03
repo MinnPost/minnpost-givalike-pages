@@ -16,6 +16,7 @@
 	defaults = {
 		'debug' : false, // this can be set to true on page level options
 		'active' : 'panel--review',
+		'confirm' : 'panel--confirmation',
 		'query' : 'step',
 		'percentage' : 0.05,
 		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
@@ -139,7 +140,7 @@
 			// geocomplete addresses if library loaded successfully
 			if (typeof google !== 'undefined' && google.hasOwnProperty('maps')) {
 				// add combined address fields for geocomplete
-				$(this.options.billing_selector, this.element).prepend('<div class="form-item form-item--billing-address form-item--geocode"><label>Billing Address<input type="text" autocapitalize="off" autocorrect="off" name="full_address" id="full_address" class="geocomplete" placeholder="" required></label><label class="additional-option"><input type="checkbox" name="useforshipping" id="useforshipping" checked="checked"> Use this address for shipping</label></div>');
+				$(this.options.billing_selector, this.element).prepend('<div class="form-item form-item--billing-address form-item--geocode"><label>Billing Address<input type="text" autocapitalize="off" autocorrect="off" name="full_address" id="full_address" class="geocomplete" placeholder=""></label><label class="additional-option"><input type="checkbox" name="useforshipping" id="useforshipping" checked="checked"> Use this address for shipping</label></div>');
 				$(this.options.shipping_selector, this.element).prepend('<div class="form-item form-item--shipping-address form-item--geocode"><label>Shipping Address<input type="text" autocapitalize="off" autocorrect="off" name="full_shipping_address" id="full_shipping_address" class="geocomplete" placeholder=""></label></div>');
 				this.getFullAddress();
 			} else {
@@ -589,19 +590,18 @@
 				url: 'http://minnpost.dev/accounts/exists',
 				data: user
 			}).done(function( data ) {
-				if (data.status === 'success' && data.reason === 'user exists') {
+				if (data.status === 'success' && data.reason === 'user exists') { // user exists
 					if ($(options.create_mp_selector, element).is(':checked')) {
 						$(options.password_selector, element).hide();
 						$(options.create_mp_selector, element).parent().hide();
 						$('.account-exists', element).show();
-					} else {
-						$(options.password_selector, element).show();
-						$(options.create_mp_selector, element).parent().show();
-						$('.account-exists', element).hide();
 					}
-				} else {
-					$(options.password_selector, element).show();
-					$(options.create_mp_selector, element).parent().show();
+				} else { // user does not exist or ajax call failed
+					if ($(options.create_mp_selector, element).is(':checked')) {
+						$(options.password_selector, element).show();
+					} else {
+						$(options.password_selector, element).hide();
+					}
 					$('.account-exists', element).hide();
 					return false;
 				}
@@ -624,23 +624,43 @@
 
 				$(options.cc_num_selector, element).on('keyup', function() {
 					var cardType = $.payment.cardType($(options.cc_num_selector, element).val());
-					//$('#credit-card-number').toggleInputError(!$.payment.validateCardNumber($('#credit-card-number').val()));
-					//if (cardType !== null) {
-					$('.card-image').attr('class', 'card-image ' + cardType);
-					//}
+					if (cardType !== null) {
+						//$('.cc-brand').text(cardType);						
+						$('.card-image').attr('class', 'card-image ' + cardType);
+					}
 				});
-
-				//$('#card-expiration').toggleInputError(!$.payment.validateCardExpiry($('#card-expiration').payment('cardExpiryVal')));
-				//$('#card-cvv').toggleInputError(!$.payment.validateCardCVC($('#card-cvv').val(), cardType));
-				//$('.cc-brand').text(cardType);
-
 			}
 		}, // creditCardFields
 
 		validateAndSubmit: function(element, options) {
-			$(options.payment_button_selector, element).click(function() {
-				// validate and 
+			var that = this;
+			$(element).submit(function(event) {
+				event.preventDefault();
+				//$(this).attr('disabled', true);
+				// validate and submit the form
+				var valid = true;
+
+				//$(options.cc_num_selector, element).toggleInputError(!$.payment.validateCardNumber($(options.cc_num_selector, element).val()));
+				//$('#card-expiration').toggleInputError(!$.payment.validateCardExpiry($('#card-expiration').payment('cardExpiryVal')));
+				//$('#card-cvv').toggleInputError(!$.payment.validateCardCVC($('#card-cvv').val(), cardType));
+
+				if (valid === true) {
+
+					// this can activate the thank you tab.
+					// though we might just need to redirect the user instead, depending on how we can get the data
+					// switch layout somehow
+					$('.progress--donation li a, .progress--donation li span').removeClass('active');
+					var query = options.confirm;
+					$('.progress--donation li.' + query + ' a, .progress--donation li.' + query + ' span').addClass('active');
+					that.paymentPanels(query);
+
+					// create minnpost account
+
+				} else {
+					// make sure error messages are displayed as needed
+				}
 			});
+			return false;
 		}, // validateAndSubmit
 
 	}; // plugin.prototype

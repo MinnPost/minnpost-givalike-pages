@@ -3,6 +3,7 @@ $(document).ready(function() {
 	// call plugin
 	$('.support--donate').minnpost_givalike({
 		'active' : 'panel--review',
+		'confirm' : 'panel--confirmation',
 		'query' : 'step',
 		'percentage' : 0.05,
 		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
