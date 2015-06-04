@@ -23,6 +23,9 @@ select {
   display: block;
   font-family: $base-font-family;
   font-size: $base-font-size;
+  &.error {
+    color: $minnpost-red;
+  }
 }
 
 .success {
@@ -105,6 +108,12 @@ textarea {
     box-shadow: $form-box-shadow-focus;
     outline: none;
   }
+
+  &.error {
+    color: $minnpost-red-error;
+    border: 1px solid $minnpost-red-error;
+  }
+
 }
 
 .form-item--credit-card {
@@ -120,6 +129,9 @@ textarea {
     &.focus {
       border-color: $action-color;
       box-shadow: $form-box-shadow-focus;
+    }
+    &.error {
+      border: 1px solid $minnpost-red-error;
     }
   }
   label {
@@ -144,6 +156,10 @@ textarea {
       text-align: left;
     }
     &:focus, &:hover {
+      border-right: 1px solid $gray-lightest;
+    }
+    &.error {
+      border: none;
       border-right: 1px solid $gray-lightest;
     }
     &:last-child {

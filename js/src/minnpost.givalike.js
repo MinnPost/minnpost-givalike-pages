@@ -123,6 +123,7 @@
 			this.options.processing_fee = parseFloat(this.options.processing_fee).toFixed(2);
 			this.options.upsell_amount = parseFloat($(this.options.upsell_amount_selector, this.element).text());
 			this.options.upsold = this.options.amount + this.options.upsell_amount;
+			this.options.cardType = null;
 
 			if (this.options.debug === true) {
 				this.debug(this.options);
@@ -626,10 +627,10 @@
 				$(options.cc_cvv_selector, element).payment('formatCardCVC');
 
 				$(options.cc_num_selector, element).on('keyup', function() {
-					var cardType = $.payment.cardType($(options.cc_num_selector, element).val());
-					if (cardType !== null) {
+					options.cardType = $.payment.cardType($(options.cc_num_selector, element).val());
+					if (options.cardType !== null) {
 						//$('.cc-brand').text(cardType);						
-						$('.card-image').attr('class', 'card-image ' + cardType);
+						$('.card-image').attr('class', 'card-image ' + options.cardType);
 					}
 				});
 			}
@@ -643,9 +644,37 @@
 				// validate and submit the form
 				var valid = true;
 
-				//$(options.cc_num_selector, element).toggleInputError(!$.payment.validateCardNumber($(options.cc_num_selector, element).val()));
-				//$('#card-expiration').toggleInputError(!$.payment.validateCardExpiry($('#card-expiration').payment('cardExpiryVal')));
-				//$('#card-cvv').toggleInputError(!$.payment.validateCardCVC($('#card-cvv').val(), cardType));
+				var valid_cc = $.payment.validateCardNumber($(options.cc_num_selector, element).val());
+				var valid_exp = $.payment.validateCardExpiry($(options.cc_exp_selector, element).payment('cardExpiryVal'));
+				var valid_cvv = $.payment.validateCardCVC($(options.cc_cvv_selector, element).val(), options.cardType);
+				if (valid_cc === false || valid_exp === false || valid_cvv === false) {
+					that.debug('cc ' + valid_cc + ' exp ' + valid_exp + ' cvv ' + valid_cvv);
+					valid = false;
+					$(options.cc_num_selector, element).parent().addClass('error');
+					if (valid_cc === false) {
+						$(options.cc_num_selector, element).addClass('error');
+					} else {
+						$(options.cc_exp_selector, element).removeClass('error');
+						$(options.cc_cvv_selector, element).removeClass('error');
+					}
+					if (valid_exp === false) {
+						$(options.cc_exp_selector, element).addClass('error');
+					} else {
+						$(options.cc_num_selector, element).removeClass('error');
+						$(options.cc_cvv_selector, element).removeClass('error');
+					}
+					if (valid_cvv === false) {
+						$(options.cc_cvv_selector, element).addClass('error');
+					} else {
+						$(options.cc_num_selector, element).removeClass('error');
+						$(options.cc_exp_selector, element).removeClass('error');
+					}
+				} else {
+					$(options.cc_num_selector, element).parent().removeClass('error');
+					$(options.cc_num_selector, element).removeClass('error');
+					$(options.cc_exp_selector, element).removeClass('error');
+					$(options.cc_cvv_selector, element).removeClass('error');
+				}
 
 				if (valid === true) {
 
@@ -659,9 +688,8 @@
 
 					// create minnpost account
 
-				} else {
-					// make sure error messages are displayed as needed
 				}
+
 			});
 			return false;
 		}, // validateAndSubmit
