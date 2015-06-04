@@ -1174,10 +1174,6 @@ $(document).ready(function() {
 				account_exists = that.checkMinnpostAccountExists(element, options, email);
 			}
 
-			$(options.create_mp_selector, element).on('change', function() {
-				doneTyping();
-			});
-
 			//setup before functions
 			var typingTimer;                //timer identifier
 			var doneTypingInterval = 5000;  //time in ms, 5 second for example
@@ -1238,6 +1234,13 @@ $(document).ready(function() {
 						$(options.create_mp_selector, element).parent().hide();
 						$('.account-exists', element).show();
 					}
+					$(options.create_mp_selector, element).on('change', function() {
+						if ($(options.create_mp_selector, element).is(':checked')) {
+							$(options.password_selector, element).hide();
+							$(options.create_mp_selector, element).parent().hide();
+							$('.account-exists', element).show();
+						}
+					});
 				} else { // user does not exist or ajax call failed
 					if ($(options.create_mp_selector, element).is(':checked')) {
 						$(options.password_selector, element).show();
