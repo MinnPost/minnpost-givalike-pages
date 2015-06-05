@@ -597,48 +597,9 @@ License: MIT
 }).call(this);
 ;// main.js
 $(document).ready(function() {
-	// call plugin
-	$('.support--donate').minnpost_givalike({
-		'active' : 'panel--review',
-		'confirm' : 'panel--confirmation',
-		'query' : 'step',
-		'percentage' : 0.05,
-		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
-		'level_amount_selector' : '.amount .level-amount',
-		'frequency_selector' : '.frequency',
-		'full_amount_selector' : '.full-amount',
-		'level_indicator_selector' : 'h2.level',
-		'level_name_selector' : '.level-name',
-		'review_benefits_selector' : '.review-benefits',
-		'allow_upsell' : true,
-		'upsell_btn_selector' : '.btn--upsell',
-		'upsell_selector' : '.well--upsell',
-		'upsell_amount_selector' : '.upsell-amount',
-		'honor_selector' : '.honor',
-		'notify_selector' : '#notify',
-		'notify_field_selector' : '.form-item--memory-notify',
-		'swag_selector' : '.swag',
-		'separate_swag_selector' : 'fieldset.swag--separate',
-		'separate_swag_redeem' : '.swag-redeem--separate',
-		'atlantic_status' : 'input[name="atlantic_status"]',
-		'atlantic_existing' : '#atlantic_existing',
-		'atlantic_selector' : '.form-item--atlantic_id',
-		'name_selector' : '.form-item--display-name',
-		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
-		'needs_shipping_selector' : '.swag--shipping',
-		'shipping_address_selector' : '.form-item--shipping-address',
-		'use_for_shipping_selector' : '#useforshipping',
-		'email_field_selector' : '#PaymentControl_txtEmail',
-		'create_mp_selector' : '#creatempaccount',
-		'password_selector' : '.form-item--password',
-		'billing_selector' : 'fieldset.billing',
-		'shipping_selector' : 'fieldset.shipping',
-		'credit_card_fieldset' : '.credit-card-group',
-		'cc_num_selector' : '#credit-card-number',
-		'cc_exp_selector' : '#card-expiration',
-		'cc_cvv_selector' : '#card-cvv',
-		'payment_button_selector' : '#submit',
-		'debug' : true
+	// call plugin and pass options if need be
+	$('.support--forms').minnpost_givalike({
+		minnpost_root : 'http://minnpost.dev'
 	});
 });;// the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
@@ -657,6 +618,9 @@ $(document).ready(function() {
 	var pluginName = 'minnpost_givalike',
 	defaults = {
 		'debug' : false, // this can be set to true on page level options
+		'minnpost_root' : 'https://www.minnpost.com',
+		'donate_form_selector' : '#donate',
+		'confirm_form_selector' : '#confirm',
 		'active' : 'panel--review',
 		'confirm' : 'panel--confirmation',
 		'query' : 'step',
@@ -687,6 +651,12 @@ $(document).ready(function() {
 		'shipping_address_selector' : '.form-item--shipping-address',
 		'use_for_shipping_selector' : '#useforshipping',
 		'email_field_selector' : '#PaymentControl_txtEmail',
+		'password_field_selector' : '#password',
+		'firstname_field_selector' : '#PaymentControl_txtFname',
+		'lastname_field_selector' : '#PaymentControl_txtLname',
+		'city_field_selector' : '#PaymentControl_txtBillCity',
+		'state_field_selector' : '#PaymentControl_ddlBillState',
+		'zip_field_selector' : '#PaymentControl_txtZip',
 		'create_mp_selector' : '#creatempaccount',
 		'password_selector' : '.form-item--password',
 		'billing_selector' : 'fieldset.billing',
@@ -696,6 +666,11 @@ $(document).ready(function() {
 		'cc_exp_selector' : '#card-expiration',
 		'cc_cvv_selector' : '#card-cvv',
 		'payment_button_selector' : '#submit',
+		'confirm_button_selector' : '#finish',
+		'newsletter_group_selector' : '[name="newsletters"]',
+		'reason_field_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoTextbox_1',
+		'share_reason_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoLabel_2',
+		'confirm_top_selector' : '.support--confirm',
 		'levels' : {
 			1 : {
 				'name' : 'bronze',
@@ -720,7 +695,8 @@ $(document).ready(function() {
 			'bronze' : true,
 			'silver' : 9,
 			'gold' : 19
-		}
+		},
+
 	}; // end defaults
 
 	// The actual plugin constructor
@@ -766,6 +742,7 @@ $(document).ready(function() {
 			this.options.upsell_amount = parseFloat($(this.options.upsell_amount_selector, this.element).text());
 			this.options.upsold = this.options.amount + this.options.upsell_amount;
 			this.options.cardType = null;
+			this.options.create_account = false;
 
 			if (this.options.debug === true) {
 				this.debug(this.options);
@@ -807,6 +784,8 @@ $(document).ready(function() {
 			this.creditCardFields(this.element, this.options); // do stuff with the credit card fields
 
 			this.validateAndSubmit(this.element, this.options); // validate and submit the form
+
+			this.confirmMessageSubmit(this.element, this.options); // submit the stuff on the confirmation page
 
 		}, // init
 
@@ -1191,6 +1170,7 @@ $(document).ready(function() {
 
 			if ($(options.create_mp_selector, element).is(':checked')) {
 				$(options.password_selector, element).show();
+				options.create_account = true;
 			} else {
 				$(options.password_selector, element).hide();
 			}
@@ -1226,7 +1206,7 @@ $(document).ready(function() {
 			};
 			$.ajax({
 				method: 'POST',
-				url: 'http://minnpost.dev/accounts/exists',
+				url: options.minnpost_root + '/accounts/exists',
 				data: user
 			}).done(function( data ) {
 				if (data.status === 'success' && data.reason === 'user exists') { // user exists
@@ -1245,6 +1225,7 @@ $(document).ready(function() {
 				} else { // user does not exist or ajax call failed
 					if ($(options.create_mp_selector, element).is(':checked')) {
 						$(options.password_selector, element).show();
+						options.create_account = true;
 					} else {
 						$(options.password_selector, element).hide();
 					}
@@ -1280,7 +1261,7 @@ $(document).ready(function() {
 
 		validateAndSubmit: function(element, options) {
 			var that = this;
-			$(element).submit(function(event) {
+			$(options.donate_form_selector).submit(function(event) {
 				event.preventDefault();
 				//$(this).attr('disabled', true);
 				// validate and submit the form
@@ -1328,13 +1309,81 @@ $(document).ready(function() {
 					$('.progress--donation li.' + query + ' a, .progress--donation li.' + query + ' span').addClass('active');
 					that.paymentPanels(query);
 
-					// create minnpost account
+					// create minnpost account if specified
+					if (options.create_account === true) {
+						var user = {
+							email: $(options.email_field_selector, element).val(),
+							first: $(options.firstname_field_selector, element).val(),
+							last: $(options.lastname_field_selector, element).val(),
+							password: $(options.password_field_selector, element).val(),
+							city: $(options.city_field_selector, element).val(),
+							state: $(options.state_field_selector, element).val()
+						};
+						$.ajax({
+							method: 'POST',
+							url: options.minnpost_root + '/accounts/create',
+							data: user
+						}).done(function( data ) {
+							if (data.status === 'success' && data.reason === 'new user') {
+								// user created - they should receive email
+							} else {
+								// user not created
+							}
+						});
+					}
 
 				}
 
 			});
 			return false;
 		}, // validateAndSubmit
+
+		confirmMessageSubmit: function(element, options) {
+			var that = this;
+			$(options.confirm_form_selector).submit(function(event) {
+				event.preventDefault();
+				// validate and submit the form
+				var valid = true;
+				var mailchimp_groups = [];
+
+				$(options.confirm_top_selector, element).prepend('<ul class="messages"></ul>');
+
+				$.each($(options.newsletter_group_selector + ':checked'), function() {
+					mailchimp_groups.push($(this).val());
+				});
+
+				if (mailchimp_groups !== '') {
+					var post_data = {
+						minnpost_mailchimp_js_form_action: 'newsletter_subscribe',
+						minnpost_mailchimp_email: $(options.email_field_selector, element).val(),
+						minnpost_mailchimp_firstname: $(options.firstname_field_selector, element).val(),
+						minnpost_mailchimp_lastname: $(options.lastname_field_selector, element).val(),
+						minnpost_mailchimp_groups: mailchimp_groups
+					};
+
+					$.ajax({
+						method: 'POST',
+						url: options.minnpost_root + '/mailchimp/minnpost/api',
+						data: post_data
+					}).done(function( result ) {
+						if (result.status === 'success') {
+							// user created - show a success message
+							$('.messages', element).append('<li>' + result.message + '</li>');
+						} else {
+							// user not created - show error message
+							$('.messages', element).append('<li>' + result.message + '</li>');
+						}
+					});
+				}
+
+				if ($(options.reason_field_selector, element).val() !== '') {
+					var share = options.share_reason_selector.val();
+					var message = options.reason_field_selector.val();
+				}
+
+			});
+			return false;
+		}, // confirmMessageSubmit
 
 	}; // plugin.prototype
 

@@ -1,46 +1,7 @@
 // main.js
 $(document).ready(function() {
-	// call plugin
-	$('.support--donate').minnpost_givalike({
-		'active' : 'panel--review',
-		'confirm' : 'panel--confirmation',
-		'query' : 'step',
-		'percentage' : 0.05,
-		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
-		'level_amount_selector' : '.amount .level-amount',
-		'frequency_selector' : '.frequency',
-		'full_amount_selector' : '.full-amount',
-		'level_indicator_selector' : 'h2.level',
-		'level_name_selector' : '.level-name',
-		'review_benefits_selector' : '.review-benefits',
-		'allow_upsell' : true,
-		'upsell_btn_selector' : '.btn--upsell',
-		'upsell_selector' : '.well--upsell',
-		'upsell_amount_selector' : '.upsell-amount',
-		'honor_selector' : '.honor',
-		'notify_selector' : '#notify',
-		'notify_field_selector' : '.form-item--memory-notify',
-		'swag_selector' : '.swag',
-		'separate_swag_selector' : 'fieldset.swag--separate',
-		'separate_swag_redeem' : '.swag-redeem--separate',
-		'atlantic_status' : 'input[name="atlantic_status"]',
-		'atlantic_existing' : '#atlantic_existing',
-		'atlantic_selector' : '.form-item--atlantic_id',
-		'name_selector' : '.form-item--display-name',
-		'anonymous_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoCheckbox_3',
-		'needs_shipping_selector' : '.swag--shipping',
-		'shipping_address_selector' : '.form-item--shipping-address',
-		'use_for_shipping_selector' : '#useforshipping',
-		'email_field_selector' : '#PaymentControl_txtEmail',
-		'create_mp_selector' : '#creatempaccount',
-		'password_selector' : '.form-item--password',
-		'billing_selector' : 'fieldset.billing',
-		'shipping_selector' : 'fieldset.shipping',
-		'credit_card_fieldset' : '.credit-card-group',
-		'cc_num_selector' : '#credit-card-number',
-		'cc_exp_selector' : '#card-expiration',
-		'cc_cvv_selector' : '#card-cvv',
-		'payment_button_selector' : '#submit',
-		'debug' : true
+	// call plugin and pass options if need be
+	$('.support--forms').minnpost_givalike({
+		minnpost_root : 'http://minnpost.dev'
 	});
 });
