@@ -91,7 +91,8 @@
 		'upsell' : {
 			'bronze' : true,
 			'silver' : 9,
-			'gold' : 19
+			'gold' : 19,
+			'platinum' : 20
 		},
 
 	}; // end defaults
