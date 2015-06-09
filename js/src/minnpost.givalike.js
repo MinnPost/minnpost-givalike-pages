@@ -92,7 +92,7 @@
 			'bronze' : true,
 			'silver' : 9,
 			'gold' : 19,
-			'platinum' : 20
+			'platinum' : false
 		},
 
 	}; // end defaults
@@ -428,7 +428,7 @@
 
 				$.each(options.upsell, function(index, value) {
 					if (index === options.level) { // current level upsell
-						if (value !== true && amount_monthly < value) {
+						if ((value !== true && amount_monthly < value) || value === false) {
 							$(options.upsell_selector, element).hide();
 						}
 					}

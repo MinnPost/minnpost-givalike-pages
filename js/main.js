@@ -600,7 +600,7 @@ $(document).ready(function() {
 	// call plugin and pass options if need be
 	$('.support--forms').minnpost_givalike({
 		'minnpost_root' : 'http://minnpost.dev',
-		'debug' : true
+		'debug' : false
 	});
 });;// the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
@@ -696,7 +696,7 @@ $(document).ready(function() {
 			'bronze' : true,
 			'silver' : 9,
 			'gold' : 19,
-			'platinum' : 20
+			'platinum' : false
 		},
 
 	}; // end defaults
@@ -1032,7 +1032,7 @@ $(document).ready(function() {
 
 				$.each(options.upsell, function(index, value) {
 					if (index === options.level) { // current level upsell
-						if (value !== true && amount_monthly < value) {
+						if ((value !== true && amount_monthly < value) || value === false) {
 							$(options.upsell_selector, element).hide();
 						}
 					}
