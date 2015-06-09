@@ -19,7 +19,6 @@
 		font-size: $small-size;
 	}
 	.honor {
-		margin-top: 1em;
 		position: relative;
 		fieldset {
 			position: absolute;
@@ -49,7 +48,7 @@
 	.actions--edit-amount {
 		line-height: normal;
 		font-size: 80%;
-		margin-bottom: 1em;
+		margin-bottom: $half-space;
 		li {
 			border-right: 1px solid $gray-med;
 			padding: 0 $half-space;
@@ -101,7 +100,7 @@
 		  background: $minnpost-blue;
 		  color: $white;
 		}
-		p.swag {
+		h3.swag, p.swag {
 			clear: both;
 		}
 	}
