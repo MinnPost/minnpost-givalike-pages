@@ -23,7 +23,7 @@
 		'query' : 'step',
 		'percentage' : 0.05,
 		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
-		'level_amount_selector' : '.level-amount',
+		'level_amount_selector' : '.amount .level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
 		'level_indicator_selector' : 'h2.level',

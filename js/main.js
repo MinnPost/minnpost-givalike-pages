@@ -599,7 +599,8 @@ License: MIT
 $(document).ready(function() {
 	// call plugin and pass options if need be
 	$('.support--forms').minnpost_givalike({
-		minnpost_root : 'http://minnpost.dev'
+		'minnpost_root' : 'http://minnpost.dev',
+		'debug' : true
 	});
 });;// the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
@@ -626,7 +627,7 @@ $(document).ready(function() {
 		'query' : 'step',
 		'percentage' : 0.05,
 		'pay_cc_processing_selector' : 'input[name="PaymentControl$cbPayFees"]',
-		'level_amount_selector' : '.level-amount',
+		'level_amount_selector' : '.amount .level-amount',
 		'frequency_selector' : '.frequency',
 		'full_amount_selector' : '.full-amount',
 		'level_indicator_selector' : 'h2.level',
