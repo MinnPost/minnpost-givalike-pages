@@ -65,6 +65,7 @@
 		'payment_button_selector' : '#submit',
 		'confirm_button_selector' : '#finish',
 		'newsletter_group_selector' : '[name="newsletters"]',
+		'message_group_selector' : '[name="messages"]',
 		'reason_field_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoTextbox_1',
 		'share_reason_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoLabel_2',
 		'confirm_top_selector' : '.support--confirm',
@@ -742,22 +743,33 @@
 				event.preventDefault();
 				// validate and submit the form
 				var valid = true;
-				var mailchimp_groups = [];
-
 				$(options.confirm_top_selector, element).prepend('<ul class="messages"></ul>');
+				var newsletter_groups = $(options.newsletter_group_selector + ':checked');
+				var message_groups = $(options.message_group_selector + ':checked');
 
-				$.each($(options.newsletter_group_selector + ':checked'), function() {
-					mailchimp_groups.push($(this).val());
-				});
-
-				if (mailchimp_groups !== '') {
+				if (typeof newsletter_groups !== 'undefined' || typeof message_groups !== 'undefined') {
 					var post_data = {
 						minnpost_mailchimp_js_form_action: 'newsletter_subscribe',
 						minnpost_mailchimp_email: $(options.email_field_selector, element).val(),
 						minnpost_mailchimp_firstname: $(options.firstname_field_selector, element).val(),
 						minnpost_mailchimp_lastname: $(options.lastname_field_selector, element).val(),
-						minnpost_mailchimp_groups: mailchimp_groups
+						minnpost_mailchimp_groups: {},
+						minnpost_mailchimp_periodic: {}
 					};
+
+					if (typeof newsletter_groups !== 'undefined') {
+						$.each(newsletter_groups, function() {
+							var group = $(this).val();
+							post_data.minnpost_mailchimp_groups[group] = group;
+						});
+					}
+
+					if (typeof message_groups !== 'undefined') {
+						$.each(message_groups, function() {
+							var group = $(this).val();
+							post_data.minnpost_mailchimp_periodic[group] = group;
+						});
+					}
 
 					$.ajax({
 						method: 'POST',
