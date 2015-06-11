@@ -7,6 +7,10 @@
 	h3 {
 		font-size: $h5-size;
 	}
+	&.error {
+	    color: $minnpost-red-error;
+	    border: 1px solid $minnpost-red-error;
+	  }
 }
 .well p:last-of-type {
 	margin-bottom: $quarter-space;

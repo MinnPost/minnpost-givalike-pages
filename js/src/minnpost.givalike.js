@@ -68,7 +68,7 @@
 		'message_group_selector' : '[name="messages"]',
 		'reason_field_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoTextbox_1',
 		'share_reason_selector' : '#PaymentControl_AdditionalInfoFields_AdditionalInfoLabel_2',
-		'confirm_top_selector' : '.support--confirm',
+		'confirm_top_selector' : '.support--post-confirm',
 		'levels' : {
 			1 : {
 				'name' : 'bronze',
@@ -743,11 +743,12 @@
 				event.preventDefault();
 				// validate and submit the form
 				var valid = true;
-				$(options.confirm_top_selector, element).prepend('<ul class="messages"></ul>');
+				$(options.confirm_top_selector, element).prepend('<ul class="well well--messages"></ul>');
 				var newsletter_groups = $(options.newsletter_group_selector + ':checked');
 				var message_groups = $(options.message_group_selector + ':checked');
 
 				if (typeof newsletter_groups !== 'undefined' || typeof message_groups !== 'undefined') {
+					$('ul.well--messages').append('<li class="mailchimp"></li>');
 					var post_data = {
 						minnpost_mailchimp_js_form_action: 'newsletter_subscribe',
 						minnpost_mailchimp_email: $(options.email_field_selector, element).val(),
@@ -778,10 +779,12 @@
 					}).done(function( result ) {
 						if (result.status === 'success') {
 							// user created - show a success message
-							$('.messages', element).append('<li>' + result.message + '</li>');
+							$('.well--messages').addClass('success');
+							$('.well--messages .mailchimp', element).html(result.message);
 						} else {
 							// user not created - show error message
-							$('.messages', element).append('<li>' + result.message + '</li>');
+							$('.well--messages').addClass('error');
+							$('.well--messages .mailchimp', element).html(result.message);
 						}
 					});
 				}

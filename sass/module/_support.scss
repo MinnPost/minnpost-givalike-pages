@@ -3,7 +3,7 @@
 }
 
 @media screen and (min-width: $large-screen) {
-	.support--summary, .support--confirm {
+	.support--summary, .support--confirm, .support--post-confirm {
 		@include row();
 		> fieldset {
 			@include span-columns(6);
